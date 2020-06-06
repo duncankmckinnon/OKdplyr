@@ -57,7 +57,11 @@ classification_metrics <- function(mod, y, y.hat, pi_0 = 0.5){
 .classification_metrics <- function(y, y.hat){
   # get confusion matrix and individual entries
   confm <- table(y.hat, y)
-  zeallot::`%<-%`(c(tp,fn,fp,tn), confm)
+
+  tp <- confm[1]
+  fn <- confm[2]
+  fp <- confm[3]
+  tn <- confm[4]
 
   # calculate and return all classification metrics
   recall <- (tp / (tp + fn))

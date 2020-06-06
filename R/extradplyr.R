@@ -38,7 +38,7 @@ attribute.summary <- function(data, summary_attr = NULL, group_attr = NULL){
   }
 
   # select columns to use in summarise
-  response_data <- select_at(data, .vars = vars(all_of(attr_names)))
+  response_data <- select_at(data, .vars = dplyr::vars(all_of(attr_names)))
   return( attributes.summarise( response_data, group_attr, F ) )
 }
 
@@ -81,7 +81,7 @@ attribute.stats <- function(data, stats_attr = NULL, .checkAssertions = T){
   attribute_types <- attribute.class(data, F)
 
   # summarise column by class
-  if( attribute_types[stats_attr] %in% c('integer', 'numeric', 'complex', 'double') ){
+  if( attribute_types[stats_attr] %in% bidirected.type ){
 
     # summarise numeric type attributes
     return(
@@ -93,11 +93,11 @@ attribute.stats <- function(data, stats_attr = NULL, .checkAssertions = T){
           'p25' = ~quantile(.x, probs = 0.25, names = F, na.rm = T),
           'mean' = ~mean(.x, na.rm = T),
           'median' = ~median(.x, na.rm = T),
-          'p75' = ~quantile(.x, probs = 0.25, names = F, na.rm = T),
+          'p75' = ~quantile(.x, probs = 0.75, names = F, na.rm = T),
           'max' = ~max(.x, na.rm = T),
           'sd' = ~sd(.x, na.rm = T)
         ))))
-  } else if( attribute_types[stats_attr] == 'Date' ){
+  } else if( attribute_types[stats_attr] %in% temporal.type ){
 
     # summarise datetime type attributes
     return(
@@ -109,7 +109,7 @@ attribute.stats <- function(data, stats_attr = NULL, .checkAssertions = T){
           'p25' = ~quantile(.x, probs = 0.25, names = F, type = 1, na.rm = T),
           'mean' = ~mean(.x, na.rm = T),
           'median' = ~median(.x, na.rm = T),
-          'p75' = ~quantile(.x, probs = 0.25, names = F, type = 1, na.rm = T),
+          'p75' = ~quantile(.x, probs = 0.75, names = F, type = 1, na.rm = T),
           'max' = ~max(.x, na.rm = T),
           'sd' = ~sd(.x, na.rm = T)
         ))))

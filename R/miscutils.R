@@ -1,5 +1,6 @@
+### Assertions ###
 
-
+#' Assertions used to change data entries and attributes
 .assertions <- function(data, attributes = NULL, requires_attributes = F, isRun = T){
   if( isRun ){
     assertthat::assert_that( !missing(data) )
@@ -13,10 +14,19 @@
   }
 }
 
+#' check if elements of entry are all unique
 are.unique <- function( v ) length( v ) == length( unique( v ) )
-on_failure(are.unique) <- function(call, env) paste0(deparse(call$v), ' are not unique')
+assertthat::on_failure(are.unique) <- function(call, env) paste0(deparse(call$v), ' are not unique')
 
-comparable.type <- c( 'integer', 'numeric', 'complex', 'double' )
+### checks for super-groups of classes ###
+
+bidirected.type <- c( 'integer', 'numeric', 'complex', 'double')
+is.bidirected <- function( x ) class( x ) %in% bidirected.type
+
+temporal.type <- c('Date', 'POSIXct', 'POSIXt', 'POSIXlt')
+is.temporal <- function( x ) class( x ) %in% temporal.type
+
+comparable.type <- c( bidirected.type, temporal.type )
 is.comparable <- function( x ) class( x ) %in% comparable.type
 
 categorical.type <- c( 'character', 'factor', 'logical' )
