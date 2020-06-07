@@ -21,10 +21,10 @@
 #'
 #' # summarise all columns grouped by 'Species'
 #' attribute.summary(iris, group_attr = 'Species')
-attribute.summary <- function(data, summary_attr = NULL, group_attr = NULL){
+attribute.summary <- function(data, summary_attr = NULL, group_attr = NULL, .checkAssertions = T){
 
   # check assertions ( used in first attributes request )
-  .assertions(data, c(summary_attr, group_attr), isRun = T)
+  .assertions(data, c(summary_attr, group_attr), isRun = .checkAssertions)
 
   # collect column names needed for summary
   if( !is.null(summary_attr) ) {

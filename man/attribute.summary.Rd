@@ -4,7 +4,12 @@
 \alias{attribute.summary}
 \title{generate summary for a given attribute grouped by a target attribute}
 \usage{
-attribute.summary(data, summary_attr = NULL, group_attr = NULL)
+attribute.summary(
+  data,
+  summary_attr = NULL,
+  group_attr = NULL,
+  .checkAssertions = T
+)
 }
 \arguments{
 \item{data}{a data frame or tibble type object}

@@ -9,10 +9,23 @@
     if( has_attributes || requires_attributes ) {
       assertthat::assert_that( has_attributes )
       assertthat::assert_that( are.unique( attributes ) )
-      if( has_attributes ) assertthat::assert_that(all( is.character( attributes ) ) && all( attributes %in% names(data) ))
+      if( has_attributes ) are.attributes( attributes, data )
     }
   }
 }
+
+#' check that non-missing attribute argument is character and is a valid index into the data
+is.attribute <- function( attr, nms ) ifelse( is.null( attr ), TRUE, ( is.character( attr ) && ( attr %in% nms ) ) )
+assertthat::on_failure(is.attribute) <- function(call, env) paste0(deparse(call$attr), ' is not a valid attribute')
+
+#' check that all non-missing attributes are character and are valid inexs into the data
+are.attributes <- function( attrs, data ) sapply( attrs, function( attr, nmd ) assertthat::assert_that( is.attribute( attr, nmd ) ), names(data) )
+
+
+#' check that there are attribute arguments
+has.attributes <- function( attrs ) any( !is.null( attrs ) )
+assertthat::on_failure(has.attributes) <- function(call, env) 'attributes required but are all null'
+
 
 #' check if elements of entry are all unique
 are.unique <- function( v ) length( v ) == length( unique( v ) )
