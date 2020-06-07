@@ -4,6 +4,7 @@
 #' @description Special format for histograms showing the summary statistics on the x axis, and the mean as a line
 #' For numerical data, generates vertical mean lines for each group.  For categorical data, generates a horizontal line
 #' representing the mean count.
+#' @export
 #' @param data the dataset, a data.frame or tibble object
 #' @param summary_attr the attribute to show (x - variable)
 #' @param group_attr the grouping attribute (fill - variable)
@@ -15,6 +16,7 @@ gghistogram <- function( data, summary_attr = NULL, group_attr = NULL, ..., fill
   # assertions for grouped data
   .assertions(data, c(summary_attr, group_attr), requires_attributes = T, isRun = T)
 
+  # initial ggplot
   p <- ggplot2::ggplot( data, mapping = ggplot2::aes_string( x = summary_attr ) ) + ggplot2::theme_bw()
   if( is.null( group_attr ) ) {
     return( .histogram.summary(p, data, summary_attr, ..., fill_color, line_color ) )
@@ -24,7 +26,6 @@ gghistogram <- function( data, summary_attr = NULL, group_attr = NULL, ..., fill
 }
 
 .histogram.summary <- function( p, data, summary_attr, ..., fill_color, line_color ){
-  # assertions run while getting summary
   summary_data <- attribute.summary( data, summary_attr, .checkAssertions = F )[[summary_attr]]
   smmryattr <- dplyr::pull( data, summary_attr )
   if( is.comparable( smmryattr ) ) {
