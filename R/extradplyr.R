@@ -2,13 +2,15 @@
 
 #' generate summary for a given attribute grouped by a target attribute
 #'
-#' @export
 #' @importFrom tidyselect all_of
-#' @importFrom dplyr vars select_at summarise_at group_by_at count_
+#' @importFrom dplyr vars select_at summarise_at group_by_at count_ summarise group_by_all
+#' @importFrom magrittr `%>%`
 #' @param data a data frame or tibble type object
 #' @param summary_attr a column label as a string to summarize
 #' @param group_attr a column label to group by before summarizing (optional)
-#' @returns a grouped summary table for the attribute(s)
+#' @return a grouped summary table for the attribute(s)
+#' @export
+#'
 #' @examples
 #' # summarise all columns
 #' attribute.summary(iris)
@@ -68,11 +70,11 @@ attributes.summarise <- function(data, group_attr = NULL, .checkAssertions = T){
 #'
 #' @param data a data frame or tibble type object
 #' @param stats_attr a column label as a string to get stats for
-#' @returns a tibble with the summary stats for the specified column/grouping
+#' @return a tibble with the summary stats for the specified column/grouping
 attribute.stats <- function(data, stats_attr = NULL, .checkAssertions = T){
 
   # for requests where column is already selected - syntactic ease of use
-  if( missing(stats_attr) && length(data) == 1 ) stats_attr <- names(data)
+  if( missing(stats_attr) && ncol(data) == 1 ) stats_attr <- names(data)
 
   # check assertions ( used in first attributes request )
   .assertions(data, stats_attr, T, isRun = .checkAssertions)
@@ -125,9 +127,10 @@ attribute.stats <- function(data, stats_attr = NULL, .checkAssertions = T){
 
 #' get the class for each column in data, as a named character vector
 #'
-#' @export
 #' @param data a data frame or tibble type object
-#' @returns a character vector of the class type of each column
+#' @return a character vector of the class type of each column
+#' @export
+#'
 #' @examples
 #' chr.ex <- sample(c('a','b','c'), 100, TRUE)
 #' int.ex <- sample(c(1,2,3), 100, TRUE)
@@ -145,4 +148,27 @@ attribute.class <- function(data, .checkAssertions = T){
 }
 
 
+#' Unique Group Counts
+#'
+#' @param data a data frame or tibble type object
+#' @param include.percent whether a column should be added to show group percentages
+#'
+#' @return a grouped data frame of unique rows with column count ( and percent )
+#' @export
+#'
+#' @examples
+#' uniqueCounts( cars )
+#' uniqueCounts(iris, T)
+uniqueCounts <- function( data, include.percent = T, .checkAssertions = T ) {
+  # check assertions ( used in first request )
+  .assertions(data, isRun = .checkAssertions)
 
+  # get all unique group counts in data
+  grouped_data <- data %>% group_by_all()
+  if( include.percent  ) {
+    grouped_data <- grouped_data %>% summarise( count = n() , percent = round ( count / nrow( data ), 3 ) )
+  } else {
+    grouped_data <- grouped_data %>% summarise( count = n() )
+  }
+  return( grouped_data %>% ungroup() )
+}

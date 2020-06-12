@@ -1,0 +1,89 @@
+#' Entropy Based Measures of Data Diversity
+#' @description Calculate the diversity of a dataset by determining the degree to which
+#' differentiable groupings in the columns vary from maximum entropy for the number of grouping.
+#' If the groupings are uniformly distributed, the entropy is maximized.  This functions calculates
+#' the ratio of the real distribution of groupings to the maximum entropy distribution to determine
+#' the overall diversity represented in the grouped data.
+#' @importFrom dplyr select
+#' @importFrom entropy entropy
+#' @importFrom magrittr `%>%`
+#' @param data a data frame or tibble type object
+#' @param ... arguments passed to 'entropy' function
+#'
+#' @return a named vector containing the percentage diversity,
+#' the true entropy of the dataset,
+#' and the potential entropy of the dataset
+#' ( diversity, entropy, potential.entropy )
+#' @export
+#'
+#' @examples
+#' diversity(cars)
+#'
+#' t <- data.frame(a = rep(0, 100))
+#' diversity(t)
+diversity <- function( data, ... ){
+
+  # check assertions ( used in first request )
+  d <- list()
+  if( is.data.frame( data ) ) {
+    d <- diversity.data.frame( data )
+  } else if( is.vector( data ) ) {
+    d <- diversity.vector( data )
+  }
+
+  return( diversity.plugin( d$fullsize, d$groups ))
+}
+
+diversity.vector <- function( data ){
+  return(
+    list(
+      'fullsize' = length(data),
+      'groups' = as.data.frame(table(x)) %>%
+        select(count = Freq) %>%
+        unlist()
+    )
+  )
+}
+
+diversity.data.frame <- function( data ) {
+  return(
+    list(
+      'fullsize' = nrow(data),
+      'groups' = uniqueCounts(data, .checkAssertions = F) %>%
+        select(count) %>%
+        unlist()
+    )
+  )
+}
+
+diversity.array <- function( data ) {
+  return(
+    list(
+      'fullsize' = nrow(data),
+      'groups' = uniqueCounts(data, .checkAssertions = F) %>%
+        select(count) %>%
+        unlist()
+    )
+  )
+}
+
+diversity.plugin <- function( fullSize, group_counts, ... ){
+
+  # count of unique groups
+  groupSize <- length(group_counts)
+
+  # count by group for uniform distribution
+  unifCount <- floor( fullSize / groupSize )
+  unifDist <- rep( unifCount, groupSize )
+
+  # entropy of uniformly distributed groups
+  unifEntropy <- entropy( y = unifDist, ... )
+
+  # true entropy of data groupings
+  groupEntropy <- entropy( y = group_counts, ... )
+
+  # diversity is the ratio of true entropy to uniform entropy
+  groupDiversity <- ifelse( unifEntropy != 0, groupEntropy / unifEntropy, 0)
+
+  return( c( 'diversity' = groupDiversity, 'entropy' = groupEntropy, 'potential.entropy' = unifEntropy ) )
+}

@@ -21,6 +21,9 @@ assertthat::on_failure(is.attribute) <- function(call, env) paste0(deparse(call$
 #' check that all non-missing attributes are character and are valid inexs into the data
 are.attributes <- function( attrs, data ) sapply( attrs, function( attr, nmd ) assertthat::assert_that( is.attribute( attr, nmd ) ), names(data) )
 
+#' check that all attributes are greater than zero
+are.greaterthanzero <- function( attrs ) all( attrs > 0 )
+assertthat::on_failure(are.greaterthanzero) <- function(call, env) paste0('all ', deparse(call$attrs), ' are not greater than zero')
 
 #' check that there are attribute arguments
 has.attributes <- function( attrs ) any( !is.null( attrs ) )
@@ -44,4 +47,3 @@ is.comparable <- function( x ) class( x ) %in% comparable.type
 
 categorical.type <- c( 'character', 'factor', 'logical' )
 is.categorical <- function( x ) class( x ) %in% categorical.type
-

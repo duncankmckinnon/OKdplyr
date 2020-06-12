@@ -109,7 +109,7 @@ train_test_val <- function(data, prop_train = 0.8, prop_test = 0, prop_validatio
 
   # all assertions
   assertthat::assert_that(is.data.frame(data))
-  assertthat::assert_that(all( c(prop_train, prop_test, prop_validation) >= 0 ))
+  assertthat::assert_that( are.greaterthanzero( c(prop_train, prop_test, prop_validation) ) )
   assertthat::assert_that(assertthat::are_equal((prop_train + prop_test + prop_validation), 1))
 
   # split train and test set using multiple assignment
