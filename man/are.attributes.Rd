@@ -9,3 +9,4 @@ are.attributes(attrs, data)
 \description{
 check that all non-missing attributes are character and are valid inexs into the data
 }
+\keyword{internal}

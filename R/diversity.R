@@ -3,19 +3,17 @@
 #' differentiable groupings in the columns vary from maximum entropy for the number of grouping.
 #' If the groupings are uniformly distributed, the entropy is maximized.  This functions calculates
 #' the ratio of the real distribution of groupings to the maximum entropy distribution to determine
-#' the overall diversity represented in the grouped data.
+#' the overall diversity represented in the data.
 #' @importFrom dplyr select
 #' @importFrom entropy entropy
 #' @importFrom magrittr `%>%`
 #' @param data a data frame or tibble type object
 #' @param ... arguments passed to 'entropy' function
-#'
 #' @return a named vector containing the percentage diversity,
 #' the true entropy of the dataset,
 #' and the potential entropy of the dataset
 #' ( diversity, entropy, potential.entropy )
 #' @export
-#'
 #' @examples
 #' diversity(cars)
 #'
@@ -34,40 +32,49 @@ diversity <- function( data, ... ){
   return( diversity.plugin( d$fullsize, d$groups ))
 }
 
-diversity.vector <- function( data ){
+#' Diversity Vector Helper
+#'
+#' @param data a vector
+#'
+#' @return list with fullsize and group to use in diversity plugin
+#' @keywords internal
+diversity_vector <- function( data ){
   return(
     list(
       'fullsize' = length(data),
       'groups' = as.data.frame(table(x)) %>%
-        select(count = Freq) %>%
+        select('count' = 'Freq') %>%
         unlist()
     )
   )
 }
 
-diversity.data.frame <- function( data ) {
+#' Diversity Data Frame Helper
+#'
+#' @param data a data frame
+#'
+#' @return list with fullsize and group to use in diversity plugin
+#' @keywords internal
+diversity_data_frame <- function( data ) {
   return(
     list(
       'fullsize' = nrow(data),
-      'groups' = uniqueCounts(data, .checkAssertions = F) %>%
-        select(count) %>%
+      'groups' = unique_counts(data, .checkAssertions = F) %>%
+        select('count') %>%
         unlist()
     )
   )
 }
 
-diversity.array <- function( data ) {
-  return(
-    list(
-      'fullsize' = nrow(data),
-      'groups' = uniqueCounts(data, .checkAssertions = F) %>%
-        select(count) %>%
-        unlist()
-    )
-  )
-}
-
-diversity.plugin <- function( fullSize, group_counts, ... ){
+#' Diversity Work Plugin
+#'
+#' @param fullSize the total number of entries in the data
+#' @param group_counts the count of occurrences for each unique value in the data
+#' @param ... arguments to the entropy function
+#'
+#' @return diversity of data, entropy of true distribution, potential entropy of uniformly distributed set
+#' @keywords internal
+diversity_plugin <- function( fullSize, group_counts, ... ){
 
   # count of unique groups
   groupSize <- length(group_counts)

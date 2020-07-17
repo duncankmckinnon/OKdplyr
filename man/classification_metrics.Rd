@@ -2,14 +2,18 @@
 % Please edit documentation in R/modeling.R
 \name{classification_metrics}
 \alias{classification_metrics}
-\title{extract all performance metrics for a binomial classification model}
+\title{Classification Metrics}
 \usage{
 classification_metrics(mod, y, y.hat, pi_0 = 0.5)
 }
 \arguments{
 \item{mod}{a general linear model of family binomial}
 
-\item{pi_0}{the threshold of determination used in classifaction (optional, default = 0.5)}
+\item{y}{actual classification values ( only used if mod not specified )}
+
+\item{y.hat}{model predicitions as percentage ( only used if mod not specified )}
+
+\item{pi_0}{the threshold of determination used in classifaction ( optional, default = 0.5 )}
 }
 \value{
 A list of classification performance metrics derived from the confusion matrix

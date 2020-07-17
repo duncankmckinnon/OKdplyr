@@ -9,3 +9,4 @@ is.attribute(attr, nms)
 \description{
 check that non-missing attribute argument is character and is a valid index into the data
 }
+\keyword{internal}

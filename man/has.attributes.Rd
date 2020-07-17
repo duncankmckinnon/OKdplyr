@@ -9,3 +9,4 @@ has.attributes(attrs)
 \description{
 check that there are attribute arguments
 }
+\keyword{internal}

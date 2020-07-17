@@ -1,29 +1,30 @@
 
 
-#' generate summary for a given attribute grouped by a target attribute
-#'
+#' Attribute Summary
+#' @description generate summary for a given attribute grouped by a target attribute
 #' @importFrom tidyselect all_of
-#' @importFrom dplyr vars select_at summarise_at group_by_at count_ summarise group_by_all
+#' @importFrom dplyr vars select_at summarise_at group_by_at count_ summarise group_by_all ungroup n
 #' @importFrom magrittr `%>%`
 #' @param data a data frame or tibble type object
 #' @param summary_attr a column label as a string to summarize
 #' @param group_attr a column label to group by before summarizing (optional)
-#' @return a grouped summary table for the attribute(s)
+#' @param .checkAssertions private variable used to check function assertions (if first in chain)
+#' @return a list containing a summary table for all attributes or the specified summary_attr (if present),
+#' grouped by the group_attr (if present)
 #' @export
-#'
 #' @examples
 #' # summarise all columns
-#' attribute.summary(iris)
+#' attribute_summary(iris)
 #'
 #' # summarise only 'Petal.Length'
-#' attribute.summary(iris, summary_attr = 'Petal.Length')
+#' attribute_summary(iris, summary_attr = 'Petal.Length')
 #'
 #' # summarise 'Petal.Length' grouped by 'Species'
-#' attribute.summary(iris, summary_attr = 'Petal.Length', group_attr = 'Species')
+#' attribute_summary(iris, summary_attr = 'Petal.Length', group_attr = 'Species')
 #'
 #' # summarise all columns grouped by 'Species'
-#' attribute.summary(iris, group_attr = 'Species')
-attribute.summary <- function(data, summary_attr = NULL, group_attr = NULL, .checkAssertions = T){
+#' attribute_summary(iris, group_attr = 'Species')
+attribute_summary <- function(data, summary_attr = NULL, group_attr = NULL, .checkAssertions = TRUE){
 
   # check assertions ( used in first attributes request )
   .assertions(data, c(summary_attr, group_attr), isRun = .checkAssertions)
@@ -41,14 +42,20 @@ attribute.summary <- function(data, summary_attr = NULL, group_attr = NULL, .che
 
   # select columns to use in summarise
   response_data <- select_at(data, .vars = dplyr::vars(all_of(attr_names)))
-  return( attributes.summarise( response_data, group_attr, F ) )
+  return( attributes_summarise( response_data, group_attr, F ) )
 }
 
-#' generate a summary of each attribute in the dataset grouped by a target attribute
-#'
+#' Summarise Attributes
+#' @description generate a summary of each attribute in the dataset grouped by a target attribute
 #' @param data a data frame or tibble type object
 #' @param group_attr a column label as a string to group by before summarizing (optional)
-attributes.summarise <- function(data, group_attr = NULL, .checkAssertions = T){
+#' @param .checkAssertions private variable used to check function assertions (if first in chain)
+#' @return a list with stats for each attribute (grouped by group_attr if present)
+#' @export
+#' @examples
+#' attributes_summarise( iris )
+#' attributes_summarise( iris, 'Species' )
+attributes_summarise <- function(data, group_attr = NULL, .checkAssertions = TRUE){
 
   # check assertions ( used in first attributes request )
   .assertions(data, group_attr, isRun = .checkAssertions)
@@ -63,15 +70,20 @@ attributes.summarise <- function(data, group_attr = NULL, .checkAssertions = T){
     # remove grouping column from summary columns
     attributes <- attributes[ attributes != group_attr ]
   }
-  return( sapply(attributes, function(x) attribute.stats(data, x, F), USE.NAMES = T, simplify = F) )
+  return( sapply(attributes, function(x) attribute_stats(data, x, F), USE.NAMES = T, simplify = F) )
 }
 
-#' get the summary statistics for an attribute (grouped or otherwise)
-#'
+#' Attribute Stats
+#' @description get the summary statistics for an attribute (grouped or otherwise)
 #' @param data a data frame or tibble type object
 #' @param stats_attr a column label as a string to get stats for
+#' @param .checkAssertions private variable used to check function assertions (if first in chain)
 #' @return a tibble with the summary stats for the specified column/grouping
-attribute.stats <- function(data, stats_attr = NULL, .checkAssertions = T){
+#' @export
+#' @examples
+#' attribute_stats( iris )
+#' attribute_stats( iris, 'Petal.Length')
+attribute_stats <- function(data, stats_attr = NULL, .checkAssertions = TRUE){
 
   # for requests where column is already selected - syntactic ease of use
   if( missing(stats_attr) && ncol(data) == 1 ) stats_attr <- names(data)
@@ -80,7 +92,7 @@ attribute.stats <- function(data, stats_attr = NULL, .checkAssertions = T){
   .assertions(data, stats_attr, T, isRun = .checkAssertions)
 
   # get class for each column in summary data
-  attribute_types <- attribute.class(data, F)
+  attribute_types <- attribute_class(data, F)
 
   # summarise column by class
   if( attribute_types[stats_attr] %in% bidirected.type ){
@@ -125,12 +137,12 @@ attribute.stats <- function(data, stats_attr = NULL, .checkAssertions = T){
   }
 }
 
-#' get the class for each column in data, as a named character vector
-#'
+#' Attribute Class
+#' @description get the class for each column in data, as a named character vector
 #' @param data a data frame or tibble type object
+#' @param .checkAssertions private variable used to check function assertions (if first in chain)
 #' @return a character vector of the class type of each column
 #' @export
-#'
 #' @examples
 #' chr.ex <- sample(c('a','b','c'), 100, TRUE)
 #' int.ex <- sample(c(1,2,3), 100, TRUE)
@@ -138,8 +150,8 @@ attribute.stats <- function(data, stats_attr = NULL, .checkAssertions = T){
 #' sample.data <- data.frame('chr' = chr.ex, 'int' = int.ex, 'dttm' = dttm.ex)
 #'
 #' # get data classes for all columns
-#' attribute.class(sample.data)
-attribute.class <- function(data, .checkAssertions = T){
+#' attribute_class(sample.data)
+attribute_class <- function(data, .checkAssertions = TRUE){
   # check assertions ( used in first attributes request )
   .assertions(data, isRun = .checkAssertions)
 
@@ -149,23 +161,22 @@ attribute.class <- function(data, .checkAssertions = T){
 
 
 #' Unique Group Counts
-#'
+#' @description counts all unique row occurrences, returns a data frame with a count for each row
 #' @param data a data frame or tibble type object
-#' @param include.percent whether a column should be added to show group percentages
-#'
+#' @param include_percent whether a column should be added to show group percentages
+#' @param .checkAssertions private variable used to check function assertions (if first in chain)
 #' @return a grouped data frame of unique rows with column count ( and percent )
 #' @export
-#'
 #' @examples
-#' uniqueCounts( cars )
-#' uniqueCounts(iris, T)
-uniqueCounts <- function( data, include.percent = T, .checkAssertions = T ) {
+#' unique_counts( cars )
+#' unique_counts( iris, include_percent = TRUE )
+unique_counts <- function( data, include_percent = TRUE, .checkAssertions = TRUE ) {
   # check assertions ( used in first request )
   .assertions(data, isRun = .checkAssertions)
 
   # get all unique group counts in data
   grouped_data <- data %>% group_by_all()
-  if( include.percent  ) {
+  if( include_percent  ) {
     grouped_data <- grouped_data %>% summarise( count = n() , percent = round ( count / nrow( data ), 3 ) )
   } else {
     grouped_data <- grouped_data %>% summarise( count = n() )

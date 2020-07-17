@@ -1,6 +1,7 @@
 ### Assertions ###
 
 #' Assertions used to change data entries and attributes
+#' @keywords internal
 .assertions <- function(data, attributes = NULL, requires_attributes = F, isRun = T){
   if( isRun ){
     assertthat::assert_that( !missing(data) )
@@ -15,22 +16,27 @@
 }
 
 #' check that non-missing attribute argument is character and is a valid index into the data
+#' @keywords internal
 is.attribute <- function( attr, nms ) ifelse( is.null( attr ), TRUE, ( is.character( attr ) && ( attr %in% nms ) ) )
 assertthat::on_failure(is.attribute) <- function(call, env) paste0(deparse(call$attr), ' is not a valid attribute')
 
 #' check that all non-missing attributes are character and are valid inexs into the data
+#' @keywords internal
 are.attributes <- function( attrs, data ) sapply( attrs, function( attr, nmd ) assertthat::assert_that( is.attribute( attr, nmd ) ), names(data) )
 
 #' check that all attributes are greater than zero
-are.greaterthanzero <- function( attrs ) all( attrs > 0 )
-assertthat::on_failure(are.greaterthanzero) <- function(call, env) paste0('all ', deparse(call$attrs), ' are not greater than zero')
+#' @keywords internal
+are.operator.value <- function( attrs, opr = `>=`, val = 0 ) all( opr( attrs, val) )
+assertthat::on_failure(are.operator.value) <- function(call, env) paste0('all ', deparse(call$attrs), ' are not', deparse(call$opr), ' to ', deparse(call$val) )
 
 #' check that there are attribute arguments
+#' @keywords internal
 has.attributes <- function( attrs ) any( !is.null( attrs ) )
 assertthat::on_failure(has.attributes) <- function(call, env) 'attributes required but are all null'
 
 
 #' check if elements of entry are all unique
+#' @keywords internal
 are.unique <- function( v ) length( v ) == length( unique( v ) )
 assertthat::on_failure(are.unique) <- function(call, env) paste0(deparse(call$v), ' are not unique')
 

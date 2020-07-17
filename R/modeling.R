@@ -1,9 +1,11 @@
 
-#' extract all performance metrics for a binomial classification model
-#'
-#' @export
+
+#' Classification Metrics
+#' @description extract all performance metrics for a binomial classification model
 #' @param mod a general linear model of family binomial
-#' @param pi_0 the threshold of determination used in classifaction (optional, default = 0.5)
+#' @param y actual classification values ( only used if mod not specified )
+#' @param y.hat model predicitions as percentage ( only used if mod not specified )
+#' @param pi_0 the threshold of determination used in classifaction ( optional, default = 0.5 )
 #' @return A list of classification performance metrics derived from the confusion matrix
 #' \itemize{
 #'  \item{y.hat}{      : the model classification predictions}
@@ -25,6 +27,7 @@
 #'  \item{npv}{        : negative predicted value}
 #'  \item{F1}{         : F1 scoring metric}
 #' }
+#' @export
 #' @examples
 #' X <- rnorm(100)
 #' Y <- ifelse(X < 0.5, 0, 1 - sample(0:1, prob = c(0.9, .1)))
@@ -90,14 +93,15 @@ classification_metrics <- function(mod, y, y.hat, pi_0 = 0.5){
   )
 }
 
-#' create training, testing and validation datasets in specified proportion
+#' Train Test Validation
+#' @description create training, testing and validation datasets in specified proportion
 #'
-#' @export
 #' @param data a data.frame type object to split
 #' @param prop_train proportion of data in training set
 #' @param prop_test proportion of data in test set
 #' @param prop_validation proportion of data in validation set (optional)
 #' @return a list containing the train and test data (and validation data if proportion > 0)
+#' @export
 #' @examples
 #' data.ex <- data.frame('A' = sample(1:100,100), 'B' = sample(101:200,100))
 #' train_test_val(data.ex, 0.6)
@@ -108,44 +112,47 @@ train_test_val <- function(data, prop_train = 0.8, prop_test = 0, prop_validatio
   prop_test <- ifelse(prop_test == 0 && prop_validation == 0, (1 - prop_train), prop_test)
 
   # all assertions
-  assertthat::assert_that(is.data.frame(data))
-  assertthat::assert_that( are.greaterthanzero( c(prop_train, prop_test, prop_validation) ) )
-  assertthat::assert_that(assertthat::are_equal((prop_train + prop_test + prop_validation), 1))
+  assertthat::assert_that( is.data.frame(data) )
+  assertthat::assert_that( are.operator.value( c(prop_train, prop_test, prop_validation), `>=`, 0 ) )
+  assertthat::assert_that( are.operator.value( sum(c(prop_train, prop_test, prop_validation)), all.equal, 1 ) )
 
   # split train and test set using multiple assignment
-  zeallot::`%<-%`(c(train, test), data.split(data, ( prop_test + prop_validation )))
+  ttsplit <- data_split(data, ( prop_test + prop_validation ))
 
   if(prop_validation > 0){
     # get proportion split between test and validation
     validation_split <- prop_validation / (prop_test + prop_validation)
 
     # split out test and validation set from test set using multiple assignment
-    zeallot::`%<-%`(c(test, validation), data.split(test, validation_split))
+    tvsplit <- data_split(test, validation_split)
     return(
       list(
-        'train' = train,
-        'test' = test,
-        'validation' = validation
+        'train' = ttsplit[[1]],
+        'test' = tvsplit[[1]],
+        'validation' = tvsplit[[2]]
       )
     )
   } else {
     return(
       list(
-        'train' = train,
-        'test' = test
+        'train' = ttsplit[[1]],
+        'test' = ttsplit[[2]]
       )
     )
   }
 }
 
 
-#' helper function for splitting out data sets by proportion
-#'
+#' Data Split
+#' @description helper function for splitting out data sets by proportion
 #' @param data a data.frame type object
 #' @param prop the proportion of the data in the secondary (smaller) subset
 #' @return a list with the primary and secondary subsets in specified proportion
-data.split <- function(data, prop){
-  zeallot::`%<-%`(c(n,m), dim(data))
+#' @export
+#' @examples
+#' data_split(cars, 0.5)
+data_split <- function(data, prop){
+  n <- nrow( data )
 
   # sample indices for secondary subset
   indices <- sample(1:n, ceiling(prop * n))

@@ -9,3 +9,4 @@ are.unique(v)
 \description{
 check if elements of entry are all unique
 }
+\keyword{internal}

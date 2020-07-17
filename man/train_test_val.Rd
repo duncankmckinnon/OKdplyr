@@ -2,7 +2,7 @@
 % Please edit documentation in R/modeling.R
 \name{train_test_val}
 \alias{train_test_val}
-\title{create training, testing and validation datasets in specified proportion}
+\title{Train Test Validation}
 \usage{
 train_test_val(data, prop_train = 0.8, prop_test = 0, prop_validation = 0)
 }

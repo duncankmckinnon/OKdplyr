@@ -3,6 +3,7 @@ Type: Package
 Title: Zero Kelvin dplyr
 Version: 0.1.0
 Author: Duncan McKinnon
+Maintainer: Duncan McKinnon <duncanmckinnon96@gmail.com>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?
@@ -15,6 +16,7 @@ Imports:
     ggplot2,
     assertthat,
     tidyselect,
+    magrittr,
     zeallot,
     entropy
 Suggests: 
