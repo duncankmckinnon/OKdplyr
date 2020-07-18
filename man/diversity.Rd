@@ -7,7 +7,7 @@
 diversity(data, ...)
 }
 \arguments{
-\item{data}{a data frame or tibble type object}
+\item{data}{a vector, data frame, or tibble type object}
 
 \item{...}{arguments passed to 'entropy' function}
 }
@@ -18,15 +18,17 @@ and the potential entropy of the dataset
 ( diversity, entropy, potential.entropy )
 }
 \description{
-Calculate the diversity of a dataset by determining the degree to which
-differentiable groupings in the columns vary from maximum entropy for the number of grouping.
+Calculate the diversity of a dataset or vector by determining the degree to which
+differentiable groups vary from maximum entropy for the number of unique grouping.
 If the groupings are uniformly distributed, the entropy is maximized.  This functions calculates
-the ratio of the real distribution of groupings to the maximum entropy distribution to determine
+the ratio of the entropy for the real distribution of groupings to the maximum entropy distribution to determine
 the overall diversity represented in the data.
 }
 \examples{
 diversity(cars)
 
 t <- data.frame(a = rep(0, 100))
+v <- runif(100)
 diversity(t)
+diversity(v)
 }
