@@ -2,7 +2,7 @@
 % Please edit documentation in R/modeling.R
 \name{data_split}
 \alias{data_split}
-\title{Data Split}
+\title{Split data into specified proportions}
 \usage{
 data_split(data, prop)
 }

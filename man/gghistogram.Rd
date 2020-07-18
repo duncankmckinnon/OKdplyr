@@ -2,7 +2,7 @@
 % Please edit documentation in R/extraggplot.R
 \name{gghistogram}
 \alias{gghistogram}
-\title{Generate Summary Histogram}
+\title{Generate quick informative summary histograms}
 \usage{
 gghistogram(
   data,

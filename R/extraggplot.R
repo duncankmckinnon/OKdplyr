@@ -1,5 +1,5 @@
 
-#' Generate Summary Histogram
+#' Generate quick informative summary histograms
 #' @description Special format for histograms showing the summary statistics on the x axis, and the mean as a line
 #' For numerical data, generates vertical mean lines for each group.  For categorical data, generates a horizontal line
 #' representing the mean count.

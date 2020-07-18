@@ -2,7 +2,7 @@
 % Please edit documentation in R/extradplyr.R
 \name{attribute_stats}
 \alias{attribute_stats}
-\title{Attribute Stats}
+\title{Get data frame summary statistics for a column of a data frame or tibble}
 \usage{
 attribute_stats(data, stats_attr = NULL, .checkAssertions = TRUE)
 }

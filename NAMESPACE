@@ -3,7 +3,6 @@
 export(attribute_class)
 export(attribute_stats)
 export(attribute_summary)
-export(attributes_summarise)
 export(classification_metrics)
 export(data_split)
 export(diversity)

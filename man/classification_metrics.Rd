@@ -2,7 +2,7 @@
 % Please edit documentation in R/modeling.R
 \name{classification_metrics}
 \alias{classification_metrics}
-\title{Classification Metrics}
+\title{Classification metrics for assessing performance of classification models}
 \usage{
 classification_metrics(mod, y, y.hat, pi_0 = 0.5)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/extradplyr.R
 \name{unique_counts}
 \alias{unique_counts}
-\title{Unique Group Counts}
+\title{Counts and proportions for each unique row in a data frame or tibble}
 \usage{
 unique_counts(data, include_percent = TRUE, .checkAssertions = TRUE)
 }

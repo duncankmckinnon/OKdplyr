@@ -1,6 +1,6 @@
 
 
-#' Classification Metrics
+#' Classification metrics for assessing performance of classification models
 #' @description extract all performance metrics for a binomial classification model
 #' @param mod a general linear model of family binomial
 #' @param y actual classification values ( only used if mod not specified )
@@ -93,7 +93,7 @@ classification_metrics <- function(mod, y, y.hat, pi_0 = 0.5){
   )
 }
 
-#' Train Test Validation
+#' Split data into training, testing and validation sets
 #' @description create training, testing and validation datasets in specified proportion
 #'
 #' @param data a data.frame type object to split
@@ -143,7 +143,7 @@ train_test_val <- function(data, prop_train = 0.8, prop_test = 0, prop_validatio
 }
 
 
-#' Data Split
+#' Split data into specified proportions
 #' @description helper function for splitting out data sets by proportion
 #' @param data a data.frame type object
 #' @param prop the proportion of the data in the secondary (smaller) subset

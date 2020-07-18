@@ -2,7 +2,7 @@
 % Please edit documentation in R/modeling.R
 \name{train_test_val}
 \alias{train_test_val}
-\title{Train Test Validation}
+\title{Split data into training, testing and validation sets}
 \usage{
 train_test_val(data, prop_train = 0.8, prop_test = 0, prop_validation = 0)
 }

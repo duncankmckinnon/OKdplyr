@@ -2,7 +2,7 @@
 % Please edit documentation in R/extradplyr.R
 \name{attribute_class}
 \alias{attribute_class}
-\title{Attribute Class}
+\title{Get class type for all columns in a data frame or tibble}
 \usage{
 attribute_class(data, .checkAssertions = TRUE)
 }

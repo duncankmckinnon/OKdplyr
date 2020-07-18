@@ -2,7 +2,7 @@
 % Please edit documentation in R/extradplyr.R
 \name{attribute_summary}
 \alias{attribute_summary}
-\title{Attribute Summary}
+\title{Get data frame summary statistics for one or all columns of a dataset (with option to group by target attribute)}
 \usage{
 attribute_summary(
   data,
