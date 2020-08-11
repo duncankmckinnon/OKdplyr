@@ -208,10 +208,10 @@ op_util <- function( x, operator, n = 1 ) remove_last_n( paste0( x, sep = operat
 
 
 #' Combine Lists
-#' @description combine multiple successive lists together, with precedence given
-#' to list elements appearing in subsequent lists.
+#' @description combine multiple successive lists together
 #' @param l1 a starting list
 #' @param ... a list or lists to combine
+#' @param merge should matching list elements be merged together or overridden by latest list (default=FALSE)
 #'
 #' @return a single list with all the elements appearing in the input lists
 #' @export
@@ -223,7 +223,8 @@ op_util <- function( x, operator, n = 1 ) remove_last_n( paste0( x, sep = operat
 #' L4 <- combine_lists(L1, L2)
 #' L5 <- combine_lists(L1, L2, L3)
 #' L6 <- combine_lists(L3, L4, L5, L1)
-combine_lists <- function( l1, ... ) try({
+#' L7 <- combine_lists(L1, L2, L3, merge=TRUE)
+combine_lists <- function( l1, ..., merge = FALSE ) try({
 
   # catch trivial case
   if( missing( l1 ) ) stop( 'l1 is missing', call. = FALSE )
@@ -240,7 +241,7 @@ combine_lists <- function( l1, ... ) try({
 
   # combine with preference for subsequent list elements
   for( i in other_lists ){
-    new_list <- .combine_list( new_list, i )
+    new_list <- .combine_list( new_list, i, merge )
   }
   return( new_list )
 
@@ -248,7 +249,7 @@ combine_lists <- function( l1, ... ) try({
 
 #' combine 2 lists
 #' @keywords internal
-.combine_list <- function( list1, list2 ) {
+.combine_list <- function( list1, list2, merge = FALSE ) {
   # Combine lists 'list1' and 'list2', giving precedence to elements found in 'list2':
   # that is, if $something is found in both 'list1' and 'list2',
   # the new (output) list will have the same values as 'list2' in $something
@@ -275,12 +276,26 @@ combine_lists <- function( l1, ... ) try({
   w <- which( !is.na( tmp ) )
 
   if ( length( w ) > 0 ) {
-    # take values from list2 in matching dimension names
     tmp <- tmp[!is.na( tmp )]
-    new.list[[ tmp ]] <- list2[[ w ]]
+    n <- 1
+    if( merge ){
+      for( i in w ){
+        # take values from list2 in matching dimension names
 
-    # append elements of 'list2' with unmatched names
-    new.list <- c( new.list, list2[ -w ] )
+        new.list[[tmp[n]]] <- c( list1[[i]], list2[[i]] )
+        n <- n + 1
+        # append elements of 'list2' with unmatched names
+      }
+    } else {
+      for( i in w ){
+        # take values from list2 in matching dimension names
+
+        new.list[[tmp[n]]] <- list2[[i]]
+        n <- n + 1
+        # append elements of 'list2' with unmatched names
+      }
+    }
+    new.list <- c( new.list, list2[-w] )
   }
   else
   {
