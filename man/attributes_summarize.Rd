@@ -21,7 +21,7 @@ generate a summary of each attribute in the dataset grouped by a target attribut
 (helper function for attribute summary)
 }
 \examples{
-attributes_summarize( iris )
-attributes_summarize( iris, 'Species' )
+attributes_summarize(iris)
+attributes_summarize(iris, 'Species')
 }
 \keyword{internal}

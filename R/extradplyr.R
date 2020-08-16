@@ -17,13 +17,13 @@
 #' attribute_summary(iris)
 #'
 #' # summarise only 'Petal.Length'
-#' attribute_summary(iris, summary_attr = 'Petal.Length')
+#' attribute_summary(iris, summary_attr='Petal.Length')
 #'
 #' # summarise 'Petal.Length' grouped by 'Species'
-#' attribute_summary(iris, summary_attr = 'Petal.Length', group_attr = 'Species')
+#' attribute_summary(iris, summary_attr='Petal.Length', group_attr='Species')
 #'
 #' # summarise all columns grouped by 'Species'
-#' attribute_summary(iris, group_attr = 'Species')
+#' attribute_summary(iris, group_attr='Species')
 attribute_summary <- function(data, summary_attr = NULL, group_attr = NULL, .checkAssertions = TRUE){
 
   # check assertions ( used in first attributes request )
@@ -54,8 +54,8 @@ attribute_summary <- function(data, summary_attr = NULL, group_attr = NULL, .che
 #' @return a list with stats for each attribute (grouped by group_attr if present)
 #' @keywords internal
 #' @examples
-#' attributes_summarize( iris )
-#' attributes_summarize( iris, 'Species' )
+#' attributes_summarize(iris)
+#' attributes_summarize(iris, 'Species')
 attributes_summarize <- function(data, group_attr = NULL, .checkAssertions = TRUE){
 
   # check assertions ( used in first attributes request )
@@ -82,8 +82,8 @@ attributes_summarize <- function(data, group_attr = NULL, .checkAssertions = TRU
 #' @return a tibble with the summary stats for the specified column/grouping
 #' @export
 #' @examples
-#' attribute_stats( iris )
-#' attribute_stats( iris, 'Petal.Length')
+#' attribute_stats(iris)
+#' attribute_stats(iris, 'Petal.Length')
 attribute_stats <- function(data, stats_attr = NULL, .checkAssertions = TRUE){
 
   # for requests where column is already selected - syntactic ease of use
@@ -147,8 +147,8 @@ attribute_stats <- function(data, stats_attr = NULL, .checkAssertions = TRUE){
 #' @examples
 #' chr.ex <- sample(c('a','b','c'), 100, TRUE)
 #' int.ex <- sample(c(1,2,3), 100, TRUE)
-#' dttm.ex <- sample(as.Date.character(paste('2020-01-', 1:30, sep = '')), 100, TRUE)
-#' sample.data <- data.frame('chr' = chr.ex, 'int' = int.ex, 'dttm' = dttm.ex)
+#' dttm.ex <- sample(as.Date.character(paste('2020-01-', 1:30, sep='')), 100, TRUE)
+#' sample.data <- data.frame('chr'=chr.ex, 'int'=int.ex, 'dttm'=dttm.ex)
 #'
 #' # get data classes for all columns
 #' attribute_class(sample.data)
@@ -169,8 +169,8 @@ attribute_class <- function(data, .checkAssertions = TRUE){
 #' @return a grouped data frame of unique rows with column count ( and percent )
 #' @export
 #' @examples
-#' unique_counts( cars )
-#' unique_counts( iris, include_percent = TRUE )
+#' unique_counts(cars)
+#' unique_counts(iris, include_percent = TRUE)
 unique_counts <- function( data, include_percent = TRUE, .checkAssertions = TRUE ) {
   # check assertions ( used in first request )
   .assertions(data, isRun = .checkAssertions)

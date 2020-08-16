@@ -95,7 +95,6 @@ classification_metrics <- function(mod, y, y.hat, pi_0 = 0.5){
 
 #' Split data into training, testing and validation sets
 #' @description create training, testing and validation datasets in specified proportion
-#'
 #' @param data a data.frame type object to split
 #' @param prop_train proportion of data in training set
 #' @param prop_test proportion of data in test set

@@ -20,8 +20,8 @@ get the class for each column in data, as a named character vector
 \examples{
 chr.ex <- sample(c('a','b','c'), 100, TRUE)
 int.ex <- sample(c(1,2,3), 100, TRUE)
-dttm.ex <- sample(as.Date.character(paste('2020-01-', 1:30, sep = '')), 100, TRUE)
-sample.data <- data.frame('chr' = chr.ex, 'int' = int.ex, 'dttm' = dttm.ex)
+dttm.ex <- sample(as.Date.character(paste('2020-01-', 1:30, sep='')), 100, TRUE)
+sample.data <- data.frame('chr'=chr.ex, 'int'=int.ex, 'dttm'=dttm.ex)
 
 # get data classes for all columns
 attribute_class(sample.data)

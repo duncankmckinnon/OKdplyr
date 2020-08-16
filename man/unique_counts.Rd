@@ -20,6 +20,6 @@ a grouped data frame of unique rows with column count ( and percent )
 counts all unique row occurrences, returns a data frame with a count for each row
 }
 \examples{
-unique_counts( cars )
-unique_counts( iris, include_percent = TRUE )
+unique_counts(cars)
+unique_counts(iris, include_percent = TRUE)
 }

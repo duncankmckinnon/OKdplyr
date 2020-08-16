@@ -4,7 +4,7 @@
 \alias{ops_util}
 \title{utility function for formatting sets of operations}
 \usage{
-ops_util(x, operator, n = 1)
+ops_util(x, operator)
 }
 \description{
 utility function for formatting sets of operations

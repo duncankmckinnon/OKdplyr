@@ -32,11 +32,11 @@ generate summary for a given attribute grouped by a target attribute
 attribute_summary(iris)
 
 # summarise only 'Petal.Length'
-attribute_summary(iris, summary_attr = 'Petal.Length')
+attribute_summary(iris, summary_attr='Petal.Length')
 
 # summarise 'Petal.Length' grouped by 'Species'
-attribute_summary(iris, summary_attr = 'Petal.Length', group_attr = 'Species')
+attribute_summary(iris, summary_attr='Petal.Length', group_attr='Species')
 
 # summarise all columns grouped by 'Species'
-attribute_summary(iris, group_attr = 'Species')
+attribute_summary(iris, group_attr='Species')
 }

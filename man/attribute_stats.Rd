@@ -20,6 +20,6 @@ a tibble with the summary stats for the specified column/grouping
 get the summary statistics for an attribute (grouped or otherwise)
 }
 \examples{
-attribute_stats( iris )
-attribute_stats( iris, 'Petal.Length')
+attribute_stats(iris)
+attribute_stats(iris, 'Petal.Length')
 }

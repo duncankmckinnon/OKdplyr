@@ -42,17 +42,66 @@ assertthat::on_failure(are.unique) <- function(call, env) paste0(deparse(call$v)
 
 ### checks for super-groups of classes ###
 
-bidirected.type <- c( 'integer', 'numeric', 'complex', 'double')
-is.bidirected <- function( x ) class( x ) %in% bidirected.type
-
-temporal.type <- c('Date', 'POSIXct', 'POSIXt', 'POSIXlt')
-is.temporal <- function( x ) class( x ) %in% temporal.type
-
+bidirected.type <- c( 'integer', 'numeric', 'complex', 'double' )
+temporal.type <- c( 'Date', 'datetime', 'POSIXct', 'POSIXt', 'POSIXlt','duration' )
 comparable.type <- c( bidirected.type, temporal.type )
-is.comparable <- function( x ) class( x ) %in% comparable.type
-
 categorical.type <- c( 'character', 'factor', 'logical' )
-is.categorical <- function( x ) class( x ) %in% categorical.type
+
+#' Is Bidirected
+#' @description bidirected types exist on a continuum with positive and negative values
+#' with no preferred direction (as opposed to temporal types where time moves forward, for example)
+#' @param x an object to test
+#' @return TRUE if x is Bidirected
+#' @export
+#' @examples
+#' is.bidirected(c(1,2,3)) # TRUE
+#' is.bidirected(c('1','2','3')) # FALSE
+is.bidirected <- function( x ) {
+  any( class( x ) %in% bidirected.type )
+}
+
+
+
+#' Is Temporal
+#' @description temporal types are references to time and date
+#' @param x an object to test
+#' @return TRUE if x is Temporal
+#' @export
+#' @examples
+#' is.temporal(Date(1)) # TRUE
+#' is.temporal(c(1,2,3)) # FALSE
+is.temporal <- function( x ) {
+  any( class( x ) %in% temporal.type )
+}
+
+#' Is Comparable
+#' @description comparable types have orderings that can be used for sorting
+#' and comparison within set (as opposed to categorical types)
+#' @param x an object to test
+#' @return TRUE if x is Comparable
+#' @export
+#' @examples
+#' is.comparable(c(1,2,3)) # TRUE
+#' is.comparable(c('1','2','3')) # FALSE
+is.comparable <- function( x ) {
+  any( class( x ) %in% comparable.type )
+}
+
+
+#' Is Categorical
+#' @description categorical types do not have orderings or hierarchies
+#' and cannot be compared within set (as opposed to comparable types)
+#' @param x an object to test
+#' @return TRUE if x is Categorical
+#' @export
+#' @examples
+#' is.categorical(c('1','2','3')) # TRUE
+#' is.categorical(Date(1)) # FALSE
+is.categorical <- function( x ) {
+  any( class( x ) %in% categorical.type )
+}
+
+### Utilities
 
 #' Remove Last N Characters
 #' @description utility function to remove n characters from the end of a character string or strings.
@@ -61,10 +110,8 @@ is.categorical <- function( x ) class( x ) %in% categorical.type
 #' @param str the string or vector of strings to be truncated
 #' @param n the number of characters at the end to remove
 #' @param missing optional sequence to use if an entry is truncated away (default = '')
-#'
 #' @return the string or strings, reduced by n characters
 #' @export
-#'
 #' @examples
 #' remove_last_n('a sequence #', 2)
 #' remove_last_n(c('a couple+','of sequences+'), 1, '...')
@@ -89,10 +136,8 @@ remove_last_n <- function( str, n = 0, missing = '' ) {
 #' @description returns a vector with the indices into the dataset,
 #' either as the named entries or the ordered positions of entries
 #' @param data any data set with positional elements
-#'
 #' @return either a numeric vector of positional indices or a character vector of named entries
 #' @export
-#'
 #' @examples
 #' get_indices(100:110)
 #' get_indices(c('a'=10,'b'=20))
@@ -117,10 +162,8 @@ get_indices <- function( data ) {
 #' @param xpower a vector of column name arguments to be elevated to the power of power (e.g. xpower = c(a,b,c), power = 2 -> a^2+b^2+c^2) or
 #' a list of (column name, power) pairs to be added together (e.g. xpower = list(c(a,2),c(b,0.5)) -> a^2+b^0.5)
 #' @param power an optional power to elevate all the values of xpower (default = 2)
-#'
 #' @return a formula in the form {y}~{xadd}{+xmultiply}{+xpower}
 #' @export
-#'
 #' @examples
 #' format_formula('y', xadd=c('a','b'))
 #' format_formula('y', xmultiply=c('a','b'))
@@ -189,16 +232,18 @@ format_formula <- function( y, xadd = NULL, xmultiply = NULL, xpower = NULL, pow
 
 #' utility function for formatting sets of operations
 #' @keywords internal
-ops_util <- function( x, operator, n = 1 ) {
-  if( is.list( x ) ) {
+ops_util <- function( x, operator ) {
 
+  # get length to remove final operation from sequence
+  n <- stringr::str_length( operator )
+
+  if( is.list( x ) ) {
     # add individual operations together
     x <- op_util( sapply( x, function( o ) {
       return( op_util( o, operator, n ) )
-    }
-    ), '+' )
+    }), '+' )
   }
-  return(  op_util( x, operator, n ) )
+  return( op_util( x, operator, n ) )
 }
 
 #' utility function for formatting single operation
@@ -212,10 +257,8 @@ op_util <- function( x, operator, n = 1 ) remove_last_n( paste0( x, sep = operat
 #' @param l1 a starting list
 #' @param ... a list or lists to combine
 #' @param merge should matching list elements be merged together or overridden by latest list (default=FALSE)
-#'
 #' @return a single list with all the elements appearing in the input lists
 #' @export
-#'
 #' @examples
 #' L1 <- list(a = 1:10, b=11:20)
 #' L2 <- list(c = 21:30, d=31:40)
@@ -250,27 +293,9 @@ combine_lists <- function( l1, ..., merge = FALSE ) try({
 #' combine 2 lists
 #' @keywords internal
 .combine_list <- function( list1, list2, merge = FALSE ) {
-  # Combine lists 'list1' and 'list2', giving precedence to elements found in 'list2':
-  # that is, if $something is found in both 'list1' and 'list2',
-  # the new (output) list will have the same values as 'list2' in $something
-
-  # Version 1.0 (August 2017)
-  #
-  # Function developed by
-  # Patrick Belisle
-  # Division of Clinical Epidemiology
-  # McGill University Hospital Center
-  # Montreal, Qc, Can
-  #
-  # patrick.belisle@rimuhc.ca
-  # http://www.medicine.mcgill.ca/epidemiology/Joseph/PBelisle/BetaParmsFromQuantiles.html
-
-
   list1.names <- names( list1 )
   list2.names <- names( list2 )
-
   new.list <- list1
-
 
   tmp <- match( list2.names, list1.names )
   w <- which( !is.na( tmp ) )
@@ -280,19 +305,15 @@ combine_lists <- function( l1, ..., merge = FALSE ) try({
     n <- 1
     if( merge ){
       for( i in w ){
-        # take values from list2 in matching dimension names
-
+        # take merge together elements with matching dimension names
         new.list[[tmp[n]]] <- c( list1[[i]], list2[[i]] )
         n <- n + 1
-        # append elements of 'list2' with unmatched names
       }
     } else {
       for( i in w ){
         # take values from list2 in matching dimension names
-
         new.list[[tmp[n]]] <- list2[[i]]
         n <- n + 1
-        # append elements of 'list2' with unmatched names
       }
     }
     new.list <- c( new.list, list2[-w] )
@@ -303,4 +324,4 @@ combine_lists <- function( l1, ..., merge = FALSE ) try({
   }
 
   new.list
-} # end of combine.lists
+}

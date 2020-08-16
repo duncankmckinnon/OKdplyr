@@ -4,9 +4,8 @@ Title: Zero Kelvin dplyr
 Version: 0.1.0
 Author: Duncan McKinnon
 Maintainer: Duncan McKinnon <duncanmckinnon96@gmail.com>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Description: A set of tools and utilities for working with data in R, loosely extending functionality from the tidyverse.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
@@ -18,7 +17,8 @@ Imports:
     tidyselect,
     magrittr,
     zeallot,
-    entropy
+    entropy,
+    stringr
 Suggests: 
     testthat
 RoxygenNote: 7.1.0
