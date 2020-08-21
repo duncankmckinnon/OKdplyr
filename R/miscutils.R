@@ -325,3 +325,23 @@ combine_lists <- function( l1, ..., merge = FALSE ) try({
 
   new.list
 }
+
+#' Update Value
+#' @description set value to update only if update passes miss condition
+#' @param value the current value of the variable being updated
+#' @param update the updated value to check
+#' @param miss the condition function for update ( default = is.null )
+#' @return update if miss condition not met, otherwise value
+#' @export
+#' @examples
+#' y<- 100
+#' y<-update_value(y, 200)
+#' y<-update_value(y, NULL)
+#' y<-update_value(y, 'a', function(x) x=='a')
+update_value <- function( value, update, miss = is.null ){
+  if( miss(update) == TRUE ){
+    value
+  } else {
+    update
+  }
+}
