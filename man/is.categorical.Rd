@@ -2,7 +2,7 @@
 % Please edit documentation in R/miscutils.R
 \name{is.categorical}
 \alias{is.categorical}
-\title{Is Categorical}
+\title{check if x is categorical type}
 \usage{
 is.categorical(x)
 }

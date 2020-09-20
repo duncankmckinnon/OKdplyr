@@ -2,7 +2,7 @@
 % Please edit documentation in R/miscutils.R
 \name{is.bidirected}
 \alias{is.bidirected}
-\title{Is Bidirected}
+\title{Check if x is bidirected type}
 \usage{
 is.bidirected(x)
 }

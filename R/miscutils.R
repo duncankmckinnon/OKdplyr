@@ -47,7 +47,7 @@ temporal.type <- c( 'Date', 'datetime', 'POSIXct', 'POSIXt', 'POSIXlt','duration
 comparable.type <- c( bidirected.type, temporal.type )
 categorical.type <- c( 'character', 'factor', 'logical' )
 
-#' Is Bidirected
+#' Check if x is bidirected type
 #' @description bidirected types exist on a continuum with positive and negative values
 #' with no preferred direction (as opposed to temporal types where time moves forward, for example)
 #' @param x an object to test
@@ -62,7 +62,7 @@ is.bidirected <- function( x ) {
 
 
 
-#' Is Temporal
+#' Check if x is temporal type
 #' @description temporal types are references to time and date
 #' @param x an object to test
 #' @return TRUE if x is Temporal
@@ -74,7 +74,7 @@ is.temporal <- function( x ) {
   any( class( x ) %in% temporal.type )
 }
 
-#' Is Comparable
+#' Check if x is comparable type
 #' @description comparable types have orderings that can be used for sorting
 #' and comparison within set (as opposed to categorical types)
 #' @param x an object to test
@@ -88,7 +88,7 @@ is.comparable <- function( x ) {
 }
 
 
-#' Is Categorical
+#' check if x is categorical type
 #' @description categorical types do not have orderings or hierarchies
 #' and cannot be compared within set (as opposed to comparable types)
 #' @param x an object to test
@@ -100,6 +100,85 @@ is.comparable <- function( x ) {
 is.categorical <- function( x ) {
   any( class( x ) %in% categorical.type )
 }
+
+
+#' Check if x is false-like
+#' @description falsey checks if x should be interpreted like FALSE,
+#' it returns true if x is any of FALSE, NULL, NA, 0, 'FALSE', length zero, missing, or error
+#' @param x an object to test
+#' @return TRUE is x is falsey
+#' @export
+#' @examples
+#' is.falsey(FALSE)
+#' is.falsey(TRUE)
+#' is.falsey(NULL)
+#' is.falsey(NA)
+#' is.falsey(0)
+#' is.falsey(1)
+#' is.falsey(-1)
+#' is.falsey('F')
+#' is.falsey('FALSE')
+#' is.falsey('F ')
+#' is.falsey(logical(0))
+#' is.falsey(c())
+is.falsey <- function( x ) tryCatch( missing(x) || isFALSE(x) || is.null(x) || is.na(x) || x == 0 || is.substring(x, 'FALSE', TRUE) || length(x) == 0,
+                                     error = function(e) TRUE )
+
+
+#' Check if string x is a substring of y
+#' @description check if a character string x is contained within another character string y.
+#' If the 'start' condition is set, only check if y starts with x (i.e. for partial match evaluations).
+#' The \%substr\% operator works equivalently, returning true if the lhs is a substring of the rhs.
+#'
+#' @param x character - a single character string
+#' @param y character - a single character string that may contain x
+#' @param start logical - if TRUE only check the first subsequence of y for x
+#' @return logical - whether x is a substring of y
+#' @export
+#' @examples
+#' is.substring('abc', 'abcdef', start = TRUE) # TRUE
+#' is.substring(' abc', 'abcdef', start = TRUE) # FALSE
+#' is.substring('xyz', 'abcdef') # FALSE
+#' is.substring('xyz','uvwxyz') # TRUE
+#' 'abc' %substr% '_abcdef_' # TRUE
+is.substring <- function( x, y, start = FALSE ){
+  str_len <- sapply(c(x, y), stringr::str_length)
+
+  # using boolean logic - take advantage of lazy evaluation
+  return(
+    (
+      # first string must be shorter
+      str_len[1] <= str_len[2]
+    ) && (
+      (
+        # check exact match
+        x == y
+      ) || (
+        # for start only check first sub-string of equal length
+        (
+          start == TRUE
+        ) && (
+          x == substr(y, 1, str_len[1])
+        )
+      ) || (
+        # check if any sub-string of equal length matches - ( can probably be optimized )
+        (
+          start != TRUE
+        ) && (
+          any(
+            sapply(1:(str_len[2] - str_len[1]),
+                   function(ind) x == substr(y, ind,  ind + (str_len[1] - 1) ),
+                   USE.NAMES = FALSE, simplify = TRUE)
+          )
+        )
+      )
+    )
+  )
+}
+
+#' @rdname is.substring
+#' @export
+`%substr%` <- function(lhs, rhs) is.substring(lhs, rhs, start = FALSE)
 
 ### Utilities
 
@@ -345,3 +424,14 @@ update_value <- function( value, update, miss = is.null ){
     update
   }
 }
+
+### Handling for dots in functions
+
+checkIn... <- function( params, ... ){
+
+}
+
+overrideFrom... <- function( params, ... ){
+
+}
+

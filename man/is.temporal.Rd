@@ -2,7 +2,7 @@
 % Please edit documentation in R/miscutils.R
 \name{is.temporal}
 \alias{is.temporal}
-\title{Is Temporal}
+\title{Check if x is temporal type}
 \usage{
 is.temporal(x)
 }

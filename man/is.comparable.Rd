@@ -2,7 +2,7 @@
 % Please edit documentation in R/miscutils.R
 \name{is.comparable}
 \alias{is.comparable}
-\title{Is Comparable}
+\title{Check if x is comparable type}
 \usage{
 is.comparable(x)
 }
