@@ -425,6 +425,27 @@ update_value <- function( value, update, miss = is.null ){
   }
 }
 
+#' Get Attribute From List or Data Frame
+#' @description select a named element from a list or data.frame with default for missed values
+#' @param x a list-like object (e.g. data.frame)
+#' @param attribute the name or index of an element in x
+#' @param default value to return if attribute is missed or error (NULL)
+#' @return the value of attribute from x or default
+#' @export
+#' @examples
+#' \dontrun{
+#' y <- list('a' = 1)
+#' x <- data.frame('b' = 2)
+#' get_attribute(y, 'a', 2) # 1
+#' get_attribute(y, 'b', 1) # 1
+#' get_attribute(x, 'a', 2) # 2
+#' get_attribute(x, 'b', 1) # 2
+#' }
+get_attribute <- function(x, attribute, default = NULL) {
+  tryCatch( if( !is.null(x[[attribute]]) ) x[[attribute]] else default ,
+            error = function(e) default )
+}
+
 ### Handling for dots in functions
 
 checkIn... <- function( params, ... ){
